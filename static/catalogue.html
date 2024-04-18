@@ -1,0 +1,79 @@
+﻿<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+</head>
+
+<body onload='init()'>
+<p>Каталог пиццы</p>
+<div id='catalogue'></div>
+</p>
+
+<p><b>Ваш заказ</b><div id='order'></div></p>
+Итого:
+<div id='total'>100 руб.</li>
+<br>
+<label for='address'>Адрес доставки:</label>
+<input type='text' id='address'/>
+<br>
+<label for='phone'>Телефон:</label>
+<input type='text' id='phone'/>
+<br>
+<label for='name'>Имя:</label>
+<input type='text' id='name'/>
+
+
+<button type='submit'>Заказать</button>
+
+</body>
+
+<script type="text/javascript">
+var template = '<ul>{{#piz}}<li>{{p}} {{price}}</li>{{/piz}}' +
+               '{{^piz}}<li>Вы пока ничего не заказали</li>{{/piz}}</ul>';
+
+var data = {
+	    piz : []
+};
+
+
+function addPizza(name, price) {
+	data.piz.push({"p": name, "price": price});
+	updateOrder();
+}
+
+
+function updateOrder() {
+    console.log(data)
+    var html = Mustache.render(template, data);
+    document.getElementById('order').innerHTML = html;
+}
+
+
+function getCatalogue() {
+	var template = '<ul>{{#piz}}<li onclick="addPizza(\'Маргарита\', 100)">{{p}} {{price}}</li>{{/piz}}' +
+               		'{{^piz}}<li>Каталог пустой</li>{{/piz}}</ul>';
+
+//	var template = "<ul>
+//	<li onclick="addPizza('Маргарита', 100)">Маргарита, 100 руб.</li>
+//	<li onclick="addPizza('Пепперони', 200)">Пепперони, 200 руб.</li>
+//	<li onclick="addPizza('Гавайская', 300)">Гавайская, 300 руб.</li>
+//</ul>
+
+	fetch('/api/pizzas')
+	  .then(response => response.json())
+	  .then(data => {
+		alert(data)
+	});
+}
+
+
+function init() {
+	getCatalogue()
+	updateOrder()
+}
+
+</script>
+
+
+
+</html>
+
