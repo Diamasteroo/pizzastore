@@ -1,0 +1,55 @@
+﻿<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+</head>
+
+<body onload='init()'>
+
+<span class="nav-link">{{ get_username() }}
+<a  href="{{url_for('simplelogin.logout')}}"> Logout</a></span>
+
+<p>Список заказов (админ)</p>
+<div id='orders'></div>
+</p>
+
+</body>
+
+
+<script type="text/javascript">
+
+{% raw %}
+var template = '{{#order}}{{orderId}}-{{clientName}}-{{clientAddress}}-{{clientPhone}}<br>'
+		+'<form method="post" action="/api/postOrderStatus"><input type="text" name="orderId" value="{{orderId}}"/><input type="text" name="orderStatus" value="{{orderStatus}}"/><input type="submit" value="Обновить"/></form>'
+		+'<ul>{{#pizzas}}<li>{{pizzaName}} </li>{{/pizzas}}</ul>{{/order}}' 
+                +'{{^order}}<li>Список заказов пуст</li>{{/order}}</ul>';
+{% endraw %}
+
+function getOrders() {
+	fetch('/api/orders')
+	  .then(response => response.json())
+	  .then(order => {
+	    var html = Mustache.render(template, {"order":order});
+	    document.getElementById('orders').innerHTML = html;
+	});
+}
+
+function postOrderStatus() {
+	fetch('/api/postOrderStatus')
+	  .then(response => response.json())
+	  .then(data => {
+		// проверить код ошибки
+		getOrders();
+	});
+}
+
+
+function init() {
+	getOrders()
+}
+
+</script>
+
+
+
+</html>
+

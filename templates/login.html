@@ -1,0 +1,7 @@
+﻿<form action="{{ url_for('simplelogin.login') }}" method="post">
+{{ form.csrf_token }}
+Логин: {{ form.username }}<br>
+Пароль: {{ form.password }}<br>
+{% if next %}<input type="hidden" name="next" value="{{next}}">{% endif %}
+<input type="submit" value="Send">
+</form>
